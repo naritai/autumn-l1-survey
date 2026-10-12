@@ -73,16 +73,46 @@ test('validation failures leave no partial answers and sessions cannot access an
   assert.equal(store.mediaAllowed(null, task.media.split('/').at(-1).slice(0, -4)), false);
 });
 
-test('60 participants get balanced assignments: 30 per shape, 15 per clip', t => {
+test('60 participants get balanced assignments: 15 per shape, 7 or 8 per clip', t => {
   const store = fixture(t, { maximum: 60 });
   for (let i = 0; i < 60; i++) store.start(null, device);
   const rows = store.rows(); assert.equal(rows.length, 360);
   const counts = field => Object.values(rows.reduce((result, row) => { result[row[field]] = (result[row[field]] || 0) + 1; return result; }, {}));
-  assert.deepEqual(new Set(counts('shape')), new Set([30]));
-  assert.deepEqual(new Set(counts('media_id')), new Set([15]));
+  assert.equal(counts('shape').length, 24);
+  assert.deepEqual(new Set(counts('shape')), new Set([15]));
+  assert.equal(counts('media_id').length, 48);
+  assert.deepEqual(new Set(counts('media_id')), new Set([7, 8]));
   assert.deepEqual(new Set(counts('participant_id')), new Set([6]));
   rejectsInput(() => store.start(null, device), 409);
   assert.equal(store.summary().participants.started, 60);
+});
+
+test('expanding the catalog preserves existing assignments, answers and study versions', t => {
+  const dir = temporary(t);
+  const oldShapes = ['leaf', 'mitten', 'mushroom', 'umbrella', 'pumpkin', 'apple', 'fir', 'house', 'fish', 'butterfly', 'bell', 'acorn'];
+  const oldCatalog = { ...catalog, version: 'l1-v1', labels: Object.fromEntries(oldShapes.map(shape => [shape, catalog.labels[shape]])), videos: catalog.videos.filter(video => oldShapes.includes(video.shape)) };
+  let store = new Store(dir, oldCatalog);
+  t.after(() => store.close());
+  const { token } = store.start(null, device);
+  store.start(null, device); // All twelve original shapes have now been assigned once.
+  const task = store.publicState(token).task;
+  store.answer(token, task.id, answer(task.options[0].id));
+  const before = store.rows(), state = store.publicState(token);
+  store.close();
+  store = new Store(dir, catalog);
+  assert.deepEqual(store.rows(), before);
+  assert.deepEqual(store.publicState(token), state);
+  assert.equal(store.start(token, device).created, false);
+  assert.equal(store.mediaAllowed(token, task.media.split('/').at(-1).slice(0, -4)), true);
+  store.rate(token, task.id, 'clear');
+  assert.equal(store.publicState(token).task.position, 2);
+  const newcomer = store.start(null, device).token;
+  const newId = store.publicState(newcomer).participant.id;
+  const newRows = store.rows().filter(row => row.participant_id === newId);
+  assert.equal(newRows.length, 6);
+  assert.ok(newRows.every(row => row.study_version === 'l1-v2-24-shapes' && !oldShapes.includes(row.shape)));
+  assert.equal(store.publicState(newcomer).task.options.length, 6);
+  assert.ok(store.rows().filter(row => row.participant_id !== newId).every(row => row.study_version === 'l1-v1'));
 });
 
 test('answers and stage survive closing and reopening SQLite', t => {
