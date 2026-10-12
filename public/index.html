@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#35204f"><title>Осенние силуэты — короткое исследование</title><link rel="stylesheet" href="/style.css"><script src="/app.js" type="module"></script></head>
+<body>
+  <main class="study">
+    <header class="brand"><span class="brand-mark" aria-hidden="true">•••</span><span>Осенние силуэты</span><span class="brand-note">Исследование</span></header>
+    <section id="challenge" class="panel" hidden>
+      <div class="step-line"><span id="step-label" class="eyebrow">Задание</span><span id="step-count"></span></div>
+      <h1 id="challenge-heading" class="compact">Какая фигура скрыта?</h1>
+      <div class="video-wrap"><video id="motion-video" width="480" height="280" preload="auto" playsinline muted aria-label="Фигура, проявляющаяся в движении точек"></video></div>
+      <button id="play-video" class="primary full" type="button">Показать движение</button>
+      <div id="answer-area"><div id="answers" class="answers" role="group" aria-label="Выберите одну из шести фигур"></div><button id="skip" class="quiet full" type="button">Не могу различить фигуру</button></div>
+      <div id="rating" hidden><p class="eyebrow">Ответ записан</p><h2>Насколько понятна фигура?</h2><div class="rating-options"><button type="button" data-clarity="clear">Понятна</button><button type="button" data-clarity="partly">Не совсем</button><button type="button" data-clarity="unclear">Непонятна</button></div></div>
+    </section>
+    <section id="finish" class="panel" hidden>
+      <p class="eyebrow">Все шесть заданий позади</p><h1>Как впечатления?</h1>
+      <form id="final-form">
+        <fieldset><legend>Было понятно, что нужно делать?</legend><div class="radio-stack"><label><input type="radio" name="instructions" value="clear" required> Да, понятно</label><label><input type="radio" name="instructions" value="partly"> Не всё было понятно</label><label><input type="radio" name="instructions" value="unclear"> Нет, было непонятно</label></div></fieldset>
+        <fieldset><legend>Насколько комфортно смотреть на движение?</legend><div class="comfort"><label><input type="radio" name="comfort" value="1" required><span>1</span></label><label><input type="radio" name="comfort" value="2"><span>2</span></label><label><input type="radio" name="comfort" value="3"><span>3</span></label><label><input type="radio" name="comfort" value="4"><span>4</span></label><label><input type="radio" name="comfort" value="5"><span>5</span></label></div><div class="scale-labels"><span>Очень некомфортно</span><span>Комфортно</span></div></fieldset>
+        <label class="comment-label" for="comment">Что было сложно или что понравилось? <span class="small">Необязательно</span></label><textarea id="comment" name="comment" rows="3" maxlength="1000" placeholder="Ваше впечатление"></textarea>
+        <button class="primary full" type="submit">Отправить впечатления</button>
+      </form>
+    </section>
+    <section id="done" class="panel" hidden><p class="eyebrow">Готово</p><h1>Спасибо за участие!</h1><p class="lead">Ваши ответы и впечатления сохранены. Они помогут сделать проверку понятнее.</p><p class="hint">Теперь эту страницу можно закрыть.</p></section>
+    <div id="notice" class="notice" role="status" aria-live="polite">Загрузка задания…</div><button id="retry-request" class="retry" type="button" hidden>Повторить</button>
+    <footer>Ответы и время решения сохраняются без имени и почты.</footer>
+  </main>
+</body></html>
