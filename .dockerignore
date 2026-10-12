@@ -1,0 +1,13 @@
+data
+data-pilot
+.venv
+.bin
+.git
+test
+tools
+*.zip
+
+exports
+.env
+.env.*
+.railway

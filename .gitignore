@@ -1,0 +1,11 @@
+data/
+data-pilot/
+.bin/
+.venv/
+*.log
+.DS_Store
+__pycache__/
+.env
+.env.*
+.railway/
+exports/

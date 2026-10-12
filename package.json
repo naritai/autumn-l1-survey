@@ -1,0 +1,15 @@
+{
+  "name": "autumn-l1-survey",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "start": "node server.mjs",
+    "preview": "DATA_DIR=./data-pilot node server.mjs",
+    "survey:share": "node scripts/share.mjs",
+    "tunnel:install": "node scripts/install-tunnel.mjs",
+    "export": "node scripts/export.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}
