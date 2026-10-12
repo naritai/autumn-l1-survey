@@ -12,9 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'media'
 W, H, FPS, SECONDS = 480, 280, 30, 3
 BASE, DOT = '#35204f', '#f9bd77'
+STUDY_VERSION = 'l1-v2-24-shapes'
 LABELS = {'leaf': 'Лист', 'mitten': 'Варежка', 'mushroom': 'Гриб', 'umbrella': 'Зонтик',
           'pumpkin': 'Тыква', 'apple': 'Яблоко', 'fir': 'Ёлка', 'house': 'Дом',
-          'fish': 'Рыба', 'butterfly': 'Бабочка', 'bell': 'Колокольчик', 'acorn': 'Жёлудь'}
+          'fish': 'Рыба', 'butterfly': 'Бабочка', 'bell': 'Колокольчик', 'acorn': 'Жёлудь',
+          'circle': 'Круг', 'square': 'Квадрат', 'triangle': 'Треугольник', 'star': 'Звезда',
+          'crescent': 'Полумесяц', 'cloud': 'Облако', 'heart': 'Сердце', 'mug': 'Чашка',
+          'key': 'Ключ', 'carrot': 'Морковь', 'boat': 'Парусник', 'plane': 'Самолёт'}
 
 
 def mask_for(shape):
@@ -52,6 +56,36 @@ def mask_for(shape):
         ellipse((185,88,297,216));polygon([(202,175),(280,175),(241,238)]);ellipse((174,65,309,139));rect((174,106,309,129));polygon([(237,77),(233,43),(249,41),(253,78)])
     elif shape == 'heart':
         ellipse((161,61,245,145));ellipse((235,61,319,145));polygon([(161,110),(319,110),(240,226)])
+    elif shape == 'circle':
+        ellipse((153,53,327,227))
+    elif shape == 'square':
+        rect((159,59,321,221))
+    elif shape == 'triangle':
+        polygon([(240,45),(140,226),(340,226)])
+    elif shape == 'star':
+        polygon([(240 + (102 if i % 2 == 0 else 45) * math.cos(-math.pi / 2 + i * math.pi / 5),
+                  145 + (102 if i % 2 == 0 else 45) * math.sin(-math.pi / 2 + i * math.pi / 5)) for i in range(10)])
+    elif shape == 'crescent':
+        ellipse((155,45,325,235))
+        d.ellipse(tuple(v * 2 for v in (210,32,357,212)), fill=0)
+    elif shape == 'cloud':
+        ellipse((140,116,230,202));ellipse((175,81,279,188));ellipse((241,104,326,197));ellipse((278,131,343,201));rect((181,151,305,202))
+    elif shape == 'mug':
+        ellipse((260,96,336,177))
+        d.ellipse(tuple(v * 2 for v in (279,114,318,159)), fill=0)
+        rect((162,76,282,178));ellipse((162,138,282,218))
+    elif shape == 'key':
+        ellipse((143,72,253,182))
+        d.ellipse(tuple(v * 2 for v in (172,101,224,153)), fill=0)
+        rect((237,113,337,141));rect((280,135,302,174));rect((316,135,337,162))
+    elif shape == 'carrot':
+        ellipse((188,84,293,141));polygon([(188,111),(292,115),(207,235)])
+        polygon([(224,101),(195,64),(211,49),(242,94),(237,44),(257,44),(258,94),(282,59),(298,74),(272,112)])
+    elif shape == 'boat':
+        polygon([(143,183),(338,183),(312,222),(172,222)])
+        rect((237,49,249,188));polygon([(229,63),(229,170),(156,170)]);polygon([(258,85),(258,170),(325,170)])
+    elif shape == 'plane':
+        polygon([(240,39),(252,62),(252,113),(339,161),(339,181),(252,156),(252,199),(275,219),(275,237),(240,222),(205,237),(205,219),(228,199),(228,156),(141,181),(141,161),(228,113),(228,62)])
     else: raise ValueError(shape)
     return image.resize((W, H), Image.Resampling.LANCZOS)
 
@@ -95,8 +129,8 @@ if __name__=='__main__':
             print(f'{shape} {variant+1}/2',flush=True)
     training=generate('heart',2)
     mask=mask_for('heart');image=Image.new('RGB',(W,H),BASE);image.paste(DOT,mask=mask);image.save(OUT/'training-reveal.png')
-    (ROOT/'catalog.json').write_text(json.dumps({'version':'l1-v1','labels':LABELS,'training':training,'videos':videos},ensure_ascii=False,indent=2)+'\n')
-    sheet=Image.new('RGB',(W*4,H*3),'#35204f')
+    (ROOT/'catalog.json').write_text(json.dumps({'version':STUDY_VERSION,'labels':LABELS,'training':training,'videos':videos},ensure_ascii=False,indent=2)+'\n')
+    sheet=Image.new('RGB',(W*4,H*math.ceil(len(LABELS)/4)),BASE)
     for i,shape in enumerate(LABELS):
         tile=Image.new('RGB',(W,H),BASE);tile.paste(DOT,mask=mask_for(shape));sheet.paste(tile,((i%4)*W,(i//4)*H))
     sheet.save(ROOT/'tools'/'shape-contact-sheet.png')
